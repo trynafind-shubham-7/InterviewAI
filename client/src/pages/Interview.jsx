@@ -13,7 +13,9 @@ import {
     FiAlertCircle, 
     FiCpu, 
     FiVolume2,
-    FiAward
+    FiAward,
+    FiHelpCircle,
+    FiInfo
 } from "react-icons/fi";
 
 import MainLayout from "../layouts/MainLayout";
@@ -46,9 +48,9 @@ function Interview() {
             <MainLayout>
                 <div className="p-8 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-center space-y-4">
                     <FiAlertCircle className="w-12 h-12 text-rose-400 mx-auto" />
-                    <h2 className="text-2xl font-bold">Browser Speech Recognition Unavailable</h2>
+                    <h2 className="text-2xl font-bold">Speech Recognition Unavailable</h2>
                     <p className="text-sm max-w-md mx-auto text-slate-300">
-                        Your browser doesn't natively support speech recognition. You can still participate by typing your answers directly into the text workspace.
+                        Your browser doesn't natively support speech recognition. You can still type your answers directly into the workspace below.
                     </p>
                 </div>
             </MainLayout>
@@ -214,8 +216,20 @@ function Interview() {
                                 Ready to Practice Your Interview?
                             </h2>
                             <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
-                                Our AI engine will inspect your profile and resume background to construct realistic technical & behavioral questions.
+                                Click the button below to generate AI questions tailored to your background.
                             </p>
+                        </div>
+
+                        {/* Quick 3-step tip for beginners */}
+                        <div className="max-w-md mx-auto p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/60 dark:border-slate-800/60 text-left text-xs text-slate-600 dark:text-slate-400 space-y-2">
+                            <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 text-xs">
+                                <FiHelpCircle className="text-indigo-500" /> How Mock Interviews Work:
+                            </div>
+                            <ol className="list-decimal list-inside space-y-1">
+                                <li>AI generates easy, medium, and hard questions.</li>
+                                <li>Click <strong>Start Mic</strong> to speak or type your answer.</li>
+                                <li>Get AI feedback and export your final report.</li>
+                            </ol>
                         </div>
 
                         <div>
@@ -237,7 +251,7 @@ function Interview() {
                                 ) : (
                                     <>
                                         <FiMic className="w-5 h-5" />
-                                        Start Practice Interview Session
+                                        Start Practice Session
                                     </>
                                 )}
                             </button>
@@ -271,12 +285,21 @@ function Interview() {
                         <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-3">
                             <div className="flex items-center gap-2">
                                 <span className="text-xs font-bold px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-                                    Prompt #{currentQuestion + 1}
+                                    Question #{currentQuestion + 1}
                                 </span>
                             </div>
                             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-relaxed">
                                 {allQuestions[currentQuestion]}
                             </h2>
+                        </div>
+
+                        {/* STAR Technique Helper Tip */}
+                        <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-xs sm:text-sm text-slate-700 dark:text-slate-300 flex items-start gap-3">
+                            <FiInfo className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+                            <div>
+                                <span className="font-bold text-indigo-600 dark:text-indigo-400">Pro Tip (STAR Method): </span>
+                                Structure your response using <strong>Situation</strong>, <strong>Task</strong>, <strong>Action</strong>, and <strong>Result</strong> for high ratings.
+                            </div>
                         </div>
 
                         {/* Answer Studio Box */}
@@ -290,7 +313,7 @@ function Interview() {
                                 {listening && (
                                     <span className="flex items-center gap-2 text-xs font-bold text-rose-500 animate-pulse">
                                         <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                                        Recording Audio...
+                                        Microphone Listening... Speak Now
                                     </span>
                                 )}
                             </div>

@@ -9,10 +9,35 @@ import {
     FiZap, 
     FiCheckCircle, 
     FiArrowRight, 
-    FiShield 
+    FiShield,
+    FiHelpCircle
 } from "react-icons/fi";
 
 function Landing() {
+    const steps = [
+        {
+            number: "01",
+            title: "Upload PDF Resume",
+            desc: "Extract text, scan keywords, and calculate your ATS compatibility score instantly.",
+            icon: FiFileText,
+            color: "from-blue-500 to-cyan-500"
+        },
+        {
+            number: "02",
+            title: "AI Question Generator",
+            desc: "Receive customized technical and behavioral questions generated directly from your background.",
+            icon: FiCpu,
+            color: "from-indigo-500 to-purple-500"
+        },
+        {
+            number: "03",
+            title: "Voice Practice & Feedback",
+            desc: "Speak your answers out loud, receive immediate scoring, and export a PDF performance sheet.",
+            icon: FiMic,
+            color: "from-purple-500 to-pink-500"
+        }
+    ];
+
     const features = [
         {
             icon: FiFileText,
@@ -47,13 +72,6 @@ function Landing() {
         { number: "98%", label: "Placement Success Rate" }
     ];
 
-    const benefits = [
-        { title: "Instant Groq AI Feedback", desc: "Sub-second evaluation powered by ultra-fast LLM inference." },
-        { title: "Voice & Speech Recognition", desc: "Practice talking out loud naturally just like in real interview calls." },
-        { title: "Tailored Skill Gap Analysis", desc: "Identify key industry keywords missing from your background." },
-        { title: "PDF Report Export", desc: "Download comprehensive performance sheets for easy review." }
-    ];
-
     return (
         <div className="min-h-screen bg-slate-950 text-slate-100 relative overflow-hidden font-sans selection:bg-indigo-500 selection:text-white">
             {/* Ambient Animated Gradient Blobs */}
@@ -82,7 +100,7 @@ function Landing() {
                         to="/register"
                         className="px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 shadow-lg shadow-indigo-500/25 transition"
                     >
-                        Get Started
+                        Get Started Free
                     </Link>
                 </div>
             </header>
@@ -96,18 +114,18 @@ function Landing() {
                 >
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-8">
                         <FiZap className="w-4 h-4 text-indigo-400" />
-                        Next-Gen AI Career Preparation
+                        Next-Gen AI Interview Platform
                     </div>
 
                     <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight leading-[1.1]">
-                        Ace Your Next Interview with{" "}
+                        Ace Your Job Interview with{" "}
                         <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
                             Artificial Intelligence
                         </span>
                     </h1>
 
                     <p className="mt-6 text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-                        Transform your job hunt with instant resume screening, voice-enabled mock interviews, and personalized AI evaluation feedback.
+                        The easiest way for job seekers to test their resume ATS scores, practice voice mock interviews, and receive personalized AI ratings.
                     </p>
 
                     <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -123,14 +141,50 @@ function Landing() {
                             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-base text-slate-300 bg-slate-900/80 hover:bg-slate-800 border border-slate-800 transition"
                         >
                             <FiShield className="w-5 h-5 text-indigo-400" />
-                            Live Demo Access
+                            Sign In to Account
                         </Link>
                     </div>
                 </motion.div>
             </section>
 
-            {/* Statistics Banner */}
+            {/* How it Works in 3 Simple Steps */}
             <section className="relative z-10 max-w-6xl mx-auto px-6 py-12">
+                <div className="text-center max-w-xl mx-auto mb-12">
+                    <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                        How It Works in 3 Easy Steps
+                    </h2>
+                    <p className="mt-3 text-slate-400 text-sm">
+                        Designed to make career preparation effortless and intuitive for everyone.
+                    </p>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6">
+                    {steps.map((item, idx) => {
+                        const Icon = item.icon;
+                        return (
+                            <div key={idx} className="p-8 rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${item.color} flex items-center justify-center text-white shadow-md`}>
+                                        <Icon className="w-6 h-6" />
+                                    </div>
+                                    <span className="text-3xl font-black text-slate-800">
+                                        {item.number}
+                                    </span>
+                                </div>
+                                <h3 className="text-lg font-bold text-white">
+                                    {item.title}
+                                </h3>
+                                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                                    {item.desc}
+                                </p>
+                            </div>
+                        );
+                    })}
+                </div>
+            </section>
+
+            {/* Statistics Banner */}
+            <section className="relative z-10 max-w-6xl mx-auto px-6 py-8">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl">
                     {stats.map((stat, idx) => (
                         <div key={idx} className="text-center">
@@ -146,13 +200,13 @@ function Landing() {
             </section>
 
             {/* Features Grid */}
-            <section className="relative z-10 max-w-7xl mx-auto px-6 py-20">
+            <section className="relative z-10 max-w-7xl mx-auto px-6 py-16">
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-                        Everything You Need to Succeed
+                        Platform Highlights
                     </h2>
                     <p className="mt-4 text-slate-400 text-base">
-                        Engineered to give you maximum confidence before stepping into real interview panels.
+                        Engineered to build maximum confidence before real interview panels.
                     </p>
                 </div>
 
@@ -182,33 +236,12 @@ function Landing() {
                 </div>
             </section>
 
-            {/* Why Choose Benefits Grid */}
-            <section className="relative z-10 max-w-6xl mx-auto px-6 py-16">
-                <div className="p-10 sm:p-14 rounded-3xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 backdrop-blur-xl">
-                    <h2 className="text-3xl sm:text-4xl font-extrabold text-center mb-12">
-                        Why Top Candidates Choose InterviewAI
-                    </h2>
-
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {benefits.map((item, idx) => (
-                            <div key={idx} className="flex items-start gap-4 p-5 rounded-2xl bg-slate-800/40 border border-slate-700/40">
-                                <FiCheckCircle className="w-6 h-6 text-indigo-400 shrink-0 mt-0.5" />
-                                <div>
-                                    <h4 className="font-bold text-white text-base">{item.title}</h4>
-                                    <p className="text-xs sm:text-sm text-slate-400 mt-1">{item.desc}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
             {/* Footer */}
             <footer className="relative z-10 py-10 border-t border-slate-800/80 text-center text-slate-500 text-sm">
                 <div className="flex items-center justify-center gap-2 font-bold text-lg text-white mb-2">
                     <FiCpu className="text-indigo-400" /> InterviewAI
                 </div>
-                <p>© 2026 InterviewAI Platform. Built for Next-Gen Job Preparation.</p>
+                <p>© 2026 InterviewAI Platform. Professional AI Interview Preparation.</p>
             </footer>
         </div>
     );

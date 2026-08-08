@@ -8,7 +8,9 @@ import {
     FiZap, 
     FiCheck, 
     FiAlertCircle, 
-    FiCpu 
+    FiCpu,
+    FiHelpCircle,
+    FiInfo
 } from "react-icons/fi";
 
 import MainLayout from "../layouts/MainLayout";
@@ -63,7 +65,7 @@ function Resume() {
             });
 
             setAnalysis(response.data.analysis);
-            setSuccess("Resume analyzed successfully by Groq AI!");
+            setSuccess("Resume successfully analyzed by AI!");
         } catch (err) {
             console.error("Resume Upload Error:", err);
             setError(err.response?.data?.message || "Failed to analyze resume. Please try again.");
@@ -74,9 +76,9 @@ function Resume() {
 
     const getScoreBadge = (score) => {
         const numScore = Number(score) || 0;
-        if (numScore >= 80) return { label: "Excellent ATS Match", color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" };
-        if (numScore >= 60) return { label: "Good - Needs Minor Tweaks", color: "text-amber-500 bg-amber-500/10 border-amber-500/20" };
-        return { label: "Needs Optimization", color: "text-rose-500 bg-rose-500/10 border-rose-500/20" };
+        if (numScore >= 80) return { label: "High ATS Match", color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" };
+        if (numScore >= 60) return { label: "Good - Needs Minor Keywords", color: "text-amber-500 bg-amber-500/10 border-amber-500/20" };
+        return { label: "Needs Key Skills Added", color: "text-rose-500 bg-rose-500/10 border-rose-500/20" };
     };
 
     return (
@@ -93,7 +95,20 @@ function Resume() {
                             ATS Resume Analyzer
                         </h1>
                         <p className="mt-2 text-slate-300 text-sm sm:text-base leading-relaxed">
-                            Upload your PDF resume to extract strengths, identify missing keywords, and get ATS compatibility scores.
+                            Upload your resume to check your score, find missing job keywords, and ensure companies don't auto-reject your application.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Beginner Explanatory Banner */}
+                <div className="p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-slate-800 dark:text-slate-200 flex items-start gap-4">
+                    <FiInfo className="w-6 h-6 text-indigo-500 shrink-0 mt-0.5" />
+                    <div className="text-xs sm:text-sm leading-relaxed space-y-1">
+                        <h4 className="font-bold text-slate-900 dark:text-white">
+                            What is an ATS Resume Score?
+                        </h4>
+                        <p className="text-slate-600 dark:text-slate-300">
+                            <strong>ATS (Applicant Tracking System)</strong> is automated software recruiters use to filter resumes. Our AI reads your PDF, grades keyword strength, and highlights missing skills so you can optimize your resume before submitting applications.
                         </p>
                     </div>
                 </div>
@@ -117,10 +132,10 @@ function Resume() {
                         </div>
 
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                            Drag & Drop Your Resume PDF
+                            Drag & Drop Your Resume PDF Here
                         </h3>
                         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                            or click below to browse files from your computer
+                            (PDF files only — max 10 MB)
                         </p>
 
                         <label className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-semibold text-sm cursor-pointer shadow-md transition-colors">
@@ -160,12 +175,12 @@ function Resume() {
                             {loading ? (
                                 <span className="flex items-center gap-2">
                                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                    Analyzing Resume...
+                                    Scanning Resume...
                                 </span>
                             ) : (
                                 <>
                                     <FiCpu className="w-4 h-4" />
-                                    Analyze Resume with AI
+                                    Analyze Resume Now
                                 </>
                             )}
                         </button>
@@ -189,7 +204,7 @@ function Resume() {
                 {/* Loading Indicator */}
                 {loading && (
                     <div className="p-12 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                        <Loader message="Extracting text & running ATS evaluation..." size="lg" />
+                        <Loader message="Extracting text & running ATS keyword evaluation..." size="lg" />
                     </div>
                 )}
 
@@ -205,7 +220,7 @@ function Resume() {
                             <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
                                 <div>
                                     <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                                        ATS Compatibility Score
+                                        Overall ATS Score
                                     </span>
                                     <h2 className="text-4xl font-extrabold text-slate-900 dark:text-white mt-1">
                                         {analysis.score} <span className="text-xl text-slate-400">/ 100</span>
@@ -268,7 +283,7 @@ function Resume() {
                                 <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
                                     <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
                                         <FiAlertTriangle className="text-amber-500" />
-                                        Recommended / Missing Keywords
+                                        Missing Keywords to Add
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
                                         {(analysis.missingSkills || []).map((skill, idx) => (
@@ -284,7 +299,7 @@ function Resume() {
                             <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
                                 <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
                                     <FiZap className="text-indigo-500" />
-                                    Actionable Enhancements
+                                    Suggested Resume Improvements
                                 </h3>
                                 <div className="space-y-3">
                                     {(analysis.improvements || []).map((item, idx) => (

@@ -10,7 +10,9 @@ import {
     FiClock, 
     FiUser, 
     FiZap,
-    FiTrendingUp
+    FiTrendingUp,
+    FiCheckCircle,
+    FiHelpCircle
 } from "react-icons/fi";
 
 import MainLayout from "../layouts/MainLayout";
@@ -37,7 +39,6 @@ function Dashboard() {
             setDashboard(res.data.dashboard);
         } catch (err) {
             console.error("Dashboard Error:", err);
-            // Fallback dashboard object if API fails or empty
             setDashboard({
                 name: localStorage.getItem("name") || "Candidate",
                 resumeScore: 78,
@@ -54,7 +55,7 @@ function Dashboard() {
         return (
             <MainLayout>
                 <div className="min-h-[70vh] flex items-center justify-center">
-                    <Loader message="Loading your dashboard analytics..." size="lg" />
+                    <Loader message="Setting up your personalized interview dashboard..." size="lg" />
                 </div>
             </MainLayout>
         );
@@ -69,11 +70,41 @@ function Dashboard() {
     };
 
     const chartData = [
-        { name: "Session 1", score: 6.2 },
-        { name: "Session 2", score: 7.0 },
-        { name: "Session 3", score: 7.8 },
-        { name: "Session 4", score: 8.5 },
-        { name: "Session 5", score: currentDashboard.bestScore || 9.0 }
+        { name: "Practice 1", score: 6.2 },
+        { name: "Practice 2", score: 7.0 },
+        { name: "Practice 3", score: 7.8 },
+        { name: "Practice 4", score: 8.5 },
+        { name: "Practice 5", score: currentDashboard.bestScore || 9.0 }
+    ];
+
+    const onboardingSteps = [
+        {
+            step: "01",
+            title: "Upload Your Resume",
+            desc: "Upload a PDF of your resume. Our AI scans it to find missing skills and ATS compatibility.",
+            icon: FiFileText,
+            action: "Upload Resume",
+            path: "/resume",
+            color: "text-blue-500 bg-blue-500/10 border-blue-500/20"
+        },
+        {
+            step: "02",
+            title: "Practice Mock Interview",
+            desc: "Answer realistic technical & behavioral questions via voice mic or typing.",
+            icon: FiMic,
+            action: "Start Interview",
+            path: "/interview",
+            color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20"
+        },
+        {
+            step: "03",
+            title: "Review Feedback & Export",
+            desc: "Get instant ratings, strengths, areas for improvement, and a downloadable PDF report.",
+            icon: FiAward,
+            action: "View History",
+            path: "/history",
+            color: "text-purple-500 bg-purple-500/10 border-purple-500/20"
+        }
     ];
 
     const quickActions = [
@@ -83,7 +114,7 @@ function Dashboard() {
             icon: FiFileText,
             path: "/resume",
             gradient: "from-blue-600 to-cyan-500",
-            badge: "ATS Scanner"
+            badge: "Step 1"
         },
         {
             title: "Mock Interview Studio",
@@ -91,7 +122,7 @@ function Dashboard() {
             icon: FiMic,
             path: "/interview",
             gradient: "from-indigo-600 to-purple-600",
-            badge: "Interactive"
+            badge: "Step 2"
         },
         {
             title: "Interview History",
@@ -99,22 +130,22 @@ function Dashboard() {
             icon: FiClock,
             path: "/history",
             gradient: "from-purple-600 to-pink-600",
-            badge: "Analytics"
+            badge: "Step 3"
         },
         {
-            title: "Profile & Settings",
-            description: "Update personal profile, target roles, and security credentials.",
+            title: "Profile & Preferences",
+            description: "Update display name, target role settings, and security credentials.",
             icon: FiUser,
             path: "/profile",
             gradient: "from-slate-700 to-slate-900",
-            badge: "User Account"
+            badge: "Account"
         }
     ];
 
     return (
         <MainLayout>
             <div className="space-y-8">
-                {/* Hero Greeting Banner */}
+                {/* Hero Banner */}
                 <motion.section
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -124,7 +155,6 @@ function Dashboard() {
                         border border-indigo-700/40 text-white p-6 sm:p-10 shadow-2xl
                     "
                 >
-                    {/* Background Decorative Mesh */}
                     <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
                     <div className="absolute -bottom-20 left-1/3 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
 
@@ -132,15 +162,15 @@ function Dashboard() {
                         <div className="max-w-2xl">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-4">
                                 <FiZap className="w-3.5 h-3.5" />
-                                AI Career Agent Active
+                                AI Preparation Assistant Ready
                             </div>
 
                             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
-                                Welcome back, <span className="bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 bg-clip-text text-transparent">{currentDashboard.name}</span>
+                                Welcome, <span className="bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 bg-clip-text text-transparent">{currentDashboard.name}</span>!
                             </h1>
 
                             <p className="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed">
-                                You are making steady progress! Complete another practice session today to boost your confidence and interview readiness.
+                                Ready to practice today? Follow the 3 simple steps below to polish your resume and master your next job interview.
                             </p>
                         </div>
 
@@ -154,67 +184,116 @@ function Dashboard() {
                                 "
                             >
                                 <FiMic className="w-4 h-4" />
-                                Start Mock Session
-                            </Link>
-                            <Link
-                                to="/resume"
-                                className="
-                                    inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm text-slate-200
-                                    bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/80 transition duration-200
-                                "
-                            >
-                                <FiFileText className="w-4 h-4 text-indigo-400" />
-                                Upload Resume
+                                Start Practice Session
                             </Link>
                         </div>
                     </div>
                 </motion.section>
 
-                {/* Statistics Grid */}
-                <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-                    <StatsCard
-                        title="Resume ATS Score"
-                        value={currentDashboard.resumeScore ? `${currentDashboard.resumeScore}/100` : "Not Uploaded"}
-                        icon={FiFileText}
-                        trend="ATS Readiness"
-                        color="indigo"
-                        progress={currentDashboard.resumeScore || 0}
-                    />
-                    <StatsCard
-                        title="Completed Interviews"
-                        value={currentDashboard.interviews ?? 0}
-                        icon={FiMic}
-                        trend="Session Count"
-                        color="emerald"
-                        progress={Math.min(100, (currentDashboard.interviews || 0) * 10)}
-                    />
-                    <StatsCard
-                        title="Average Performance"
-                        value={currentDashboard.averageScore ? `${currentDashboard.averageScore} / 10` : "N/A"}
-                        icon={FiStar}
-                        trend="Overall Rating"
-                        color="amber"
-                        progress={(currentDashboard.averageScore || 0) * 10}
-                    />
-                    <StatsCard
-                        title="Best Session Rating"
-                        value={currentDashboard.bestScore ? `${currentDashboard.bestScore} / 10` : "N/A"}
-                        icon={FiAward}
-                        trend="Personal Record"
-                        color="violet"
-                        progress={(currentDashboard.bestScore || 0) * 10}
-                    />
+                {/* 3-Step Beginner Workflow Guide */}
+                <section className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                                <FiHelpCircle className="text-indigo-500" />
+                                How InterviewAI Works (3 Simple Steps)
+                            </h2>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                                Perfect for first-time users. Complete these steps in order for best results.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        {onboardingSteps.map((item, idx) => {
+                            const Icon = item.icon;
+                            return (
+                                <div
+                                    key={idx}
+                                    className="
+                                        relative p-6 rounded-2xl bg-white dark:bg-slate-900/90
+                                        border border-slate-200/80 dark:border-slate-800/80 shadow-sm
+                                        flex flex-col justify-between space-y-4
+                                    "
+                                >
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <div className={`p-3 rounded-xl border ${item.color}`}>
+                                                <Icon className="w-5 h-5" />
+                                            </div>
+                                            <span className="text-2xl font-black text-slate-200 dark:text-slate-800">
+                                                {item.step}
+                                            </span>
+                                        </div>
+
+                                        <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                                            {item.title}
+                                        </h3>
+                                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                                            {item.desc}
+                                        </p>
+                                    </div>
+
+                                    <Link
+                                        to={item.path}
+                                        className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline pt-2"
+                                    >
+                                        {item.action} <FiArrowRight className="w-3.5 h-3.5" />
+                                    </Link>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </section>
 
-                {/* Quick Actions Section */}
+                {/* Statistics Grid */}
+                <section className="space-y-3">
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                        Your Practice Metrics
+                    </h2>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                        <StatsCard
+                            title="Resume ATS Score"
+                            value={currentDashboard.resumeScore ? `${currentDashboard.resumeScore}/100` : "Not Uploaded"}
+                            icon={FiFileText}
+                            trend="Resume Scan Readiness"
+                            color="indigo"
+                            progress={currentDashboard.resumeScore || 0}
+                        />
+                        <StatsCard
+                            title="Completed Interviews"
+                            value={currentDashboard.interviews ?? 0}
+                            icon={FiMic}
+                            trend="Total Sessions"
+                            color="emerald"
+                            progress={Math.min(100, (currentDashboard.interviews || 0) * 10)}
+                        />
+                        <StatsCard
+                            title="Average Performance"
+                            value={currentDashboard.averageScore ? `${currentDashboard.averageScore} / 10` : "N/A"}
+                            icon={FiStar}
+                            trend="Overall Rating"
+                            color="amber"
+                            progress={(currentDashboard.averageScore || 0) * 10}
+                        />
+                        <StatsCard
+                            title="Best Session Score"
+                            value={currentDashboard.bestScore ? `${currentDashboard.bestScore} / 10` : "N/A"}
+                            icon={FiAward}
+                            trend="Personal Record"
+                            color="violet"
+                            progress={(currentDashboard.bestScore || 0) * 10}
+                        />
+                    </div>
+                </section>
+
+                {/* Modules Grid */}
                 <section className="space-y-4">
                     <div>
-                        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                            Quick Launch Actions
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+                            Explore Modules
                         </h2>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Jump straight into your interview practice and career analysis modules.
-                        </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -237,20 +316,20 @@ function Dashboard() {
 
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between">
-                                                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                                <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                                     {item.title}
                                                 </h3>
-                                                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                                                     {item.badge}
                                                 </span>
                                             </div>
 
-                                            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                                            <p className="mt-1.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                                                 {item.description}
                                             </p>
 
-                                            <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform">
-                                                Open Module <FiArrowRight className="w-4 h-4" />
+                                            <div className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform">
+                                                Open Module <FiArrowRight className="w-3.5 h-3.5" />
                                             </div>
                                         </div>
                                     </div>
@@ -260,18 +339,16 @@ function Dashboard() {
                     </div>
                 </section>
 
-                {/* Score Trend Chart Section */}
+                {/* Score Chart */}
                 <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
-                    <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-                                <FiTrendingUp className="text-indigo-500" />
-                                Interview Performance Trend
-                            </h2>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Ratings progress across recent mock interview attempts.
-                            </p>
-                        </div>
+                    <div className="mb-6">
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                            <FiTrendingUp className="text-indigo-500" />
+                            Performance Growth Chart
+                        </h2>
+                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                            Shows how your interview rating improves with each practice session.
+                        </p>
                     </div>
 
                     <ScoreChart data={chartData} />
