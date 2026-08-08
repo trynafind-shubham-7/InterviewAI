@@ -69,13 +69,12 @@ function Dashboard() {
         bestScore: 0
     };
 
-    const chartData = [
-        { name: "Practice 1", score: 6.2 },
-        { name: "Practice 2", score: 7.0 },
-        { name: "Practice 3", score: 7.8 },
-        { name: "Practice 4", score: 8.5 },
-        { name: "Practice 5", score: currentDashboard.bestScore || 9.0 }
-    ];
+    // Build chart from real history data only
+    const chartData = (currentDashboard.history || []).map((session, idx) => ({
+        name: `Session ${idx + 1}`,
+        score: session.averageScore ?? session.score ?? 0
+    }));
+    const hasChartData = chartData.length > 0;
 
     const onboardingSteps = [
         {
@@ -351,7 +350,30 @@ function Dashboard() {
                         </p>
                     </div>
 
-                    <ScoreChart data={chartData} />
+                    {hasChartData ? (
+                        <ScoreChart data={chartData} />
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-14 gap-4 text-center">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                <FiTrendingUp className="w-8 h-8 text-slate-400" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-slate-700 dark:text-slate-300">
+                                    No practice sessions yet
+                                </p>
+                                <p className="text-xs text-slate-400 mt-1">
+                                    Complete your first mock interview to see your score chart here.
+                                </p>
+                            </div>
+                            <Link
+                                to="/interview"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-500 transition"
+                            >
+                                <FiMic className="w-4 h-4" />
+                                Start First Interview
+                            </Link>
+                        </div>
+                    )}
                 </section>
             </div>
         </MainLayout>
