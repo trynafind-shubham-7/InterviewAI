@@ -1,46 +1,38 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
+import { 
+    FiMic, 
+    FiSquare, 
+    FiTrash2, 
+    FiStar, 
+    FiArrowLeft, 
+    FiArrowRight, 
+    FiCheckCircle, 
+    FiAlertCircle, 
+    FiCpu, 
+    FiVolume2,
+    FiAward
+} from "react-icons/fi";
 
 import MainLayout from "../layouts/MainLayout";
+import Loader from "../components/Loader";
 import api from "../api/axios";
 
-import SpeechRecognition, {
-    useSpeechRecognition
-} from "react-speech-recognition";
-
 function Interview() {
-
     const navigate = useNavigate();
 
-    const [questions, setQuestions] =
-        useState(null);
-
-    const [allQuestions, setAllQuestions] =
-        useState([]);
-
-    const [currentQuestion, setCurrentQuestion] =
-        useState(0);
-
-    const [answers, setAnswers] =
-        useState([]);
-
-    const [answer, setAnswer] =
-        useState("");
-
-    const [evaluation, setEvaluation] =
-        useState(null);
-
-    const [loading, setLoading] =
-        useState(false);
-
-    const [evaluating, setEvaluating] =
-        useState(false);
-
-    const [finishing, setFinishing] =
-        useState(false);
-
-    const [error, setError] =
-        useState("");
+    const [questions, setQuestions] = useState(null);
+    const [allQuestions, setAllQuestions] = useState([]);
+    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [answers, setAnswers] = useState([]);
+    const [answer, setAnswer] = useState("");
+    const [evaluation, setEvaluation] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [evaluating, setEvaluating] = useState(false);
+    const [finishing, setFinishing] = useState(false);
+    const [error, setError] = useState("");
 
     const {
         transcript,
@@ -49,1128 +41,413 @@ function Interview() {
         browserSupportsSpeechRecognition
     } = useSpeechRecognition();
 
-
     if (!browserSupportsSpeechRecognition) {
-
         return (
-
             <MainLayout>
-
-                <div
-                    className="
-                        bg-red-50
-                        dark:bg-red-900/20
-                        border
-                        border-red-200
-                        dark:border-red-800
-                        rounded-2xl
-                        p-6
-                    "
-                >
-
-                    <h1
-                        className="
-                            text-2xl
-                            font-bold
-                            text-red-700
-                            dark:text-red-300
-                        "
-                    >
-                        Speech Recognition is not
-                        supported in this browser.
-                    </h1>
-
-                    <p
-                        className="
-                            mt-2
-                            text-red-600
-                            dark:text-red-400
-                        "
-                    >
-                        You can still type your answers
-                        manually if your browser allows
-                        the interview page to load.
+                <div className="p-8 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-center space-y-4">
+                    <FiAlertCircle className="w-12 h-12 text-rose-400 mx-auto" />
+                    <h2 className="text-2xl font-bold">Browser Speech Recognition Unavailable</h2>
+                    <p className="text-sm max-w-md mx-auto text-slate-300">
+                        Your browser doesn't natively support speech recognition. You can still participate by typing your answers directly into the text workspace.
                     </p>
-
                 </div>
-
             </MainLayout>
-
         );
-
     }
 
-
     const generateQuestions = async () => {
-
         try {
-
             setLoading(true);
-
             setError("");
-
             setEvaluation(null);
 
-            const token =
-                localStorage.getItem("token");
+            const token = localStorage.getItem("token");
+            const res = await api.post("/interview/generate", {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-            const res = await api.post(
-
-                "/interview/generate",
-
-                {},
-
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
-                }
-
-            );
-
-
-            const generated =
-                res.data.questions;
-
-
+            const generated = res.data.questions;
             const all = [
-
                 ...(generated.easy || []),
-
                 ...(generated.medium || []),
-
                 ...(generated.hard || [])
-
             ];
 
-
             if (all.length === 0) {
-
-                throw new Error(
-                    "No interview questions were generated."
-                );
-
+                throw new Error("No interview questions were generated.");
             }
 
-
             setQuestions(generated);
-
             setAllQuestions(all);
-
             setCurrentQuestion(0);
-
             setAnswers([]);
-
             setAnswer("");
-
             resetTranscript();
-
-        }
-
-        catch (err) {
-
-            console.error(
-                "Interview Generation Error:",
-                err
-            );
-
-            setError(
-
-                err.response?.data?.message ||
-
-                err.message ||
-
-                "Failed to generate interview questions."
-
-            );
-
-        }
-
-        finally {
-
+        } catch (err) {
+            console.error("Interview Generation Error:", err);
+            setError(err.response?.data?.message || err.message || "Failed to generate interview questions.");
+        } finally {
             setLoading(false);
-
         }
-
     };
-
 
     const evaluateAnswer = async () => {
-
         if (!answer.trim()) {
-
-            setError(
-                "Please enter an answer before evaluating."
-            );
-
+            setError("Please provide an answer before evaluating.");
             return;
-
         }
-
 
         try {
-
             setEvaluating(true);
-
             setError("");
 
-            const token =
-                localStorage.getItem("token");
-
-
+            const token = localStorage.getItem("token");
             const res = await api.post(
-
                 "/evaluation",
-
-                {
-                    question:
-                        allQuestions[
-                            currentQuestion
-                        ],
-
-                    answer
-                },
-
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
-                }
-
+                { question: allQuestions[currentQuestion], answer },
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
-
-            setEvaluation(
-                res.data.evaluation
-            );
-
-        }
-
-        catch (err) {
-
-            console.error(
-                "Evaluation Error:",
-                err
-            );
-
-            setError(
-
-                err.response?.data?.message ||
-
-                "Evaluation failed."
-
-            );
-
-        }
-
-        finally {
-
+            setEvaluation(res.data.evaluation);
+        } catch (err) {
+            console.error("Evaluation Error:", err);
+            setError(err.response?.data?.message || "Answer evaluation failed.");
+        } finally {
             setEvaluating(false);
-
         }
-
     };
-
 
     const saveCurrentAnswer = () => {
-
-        const updatedAnswers =
-            [...answers];
-
-        updatedAnswers[
-            currentQuestion
-        ] = answer;
-
+        const updatedAnswers = [...answers];
+        updatedAnswers[currentQuestion] = answer;
         return updatedAnswers;
-
     };
-
 
     const goToPrevious = () => {
-
-        const updatedAnswers =
-            saveCurrentAnswer();
-
-        const previous =
-            currentQuestion - 1;
-
+        const updatedAnswers = saveCurrentAnswer();
+        const previous = currentQuestion - 1;
         setAnswers(updatedAnswers);
-
         setCurrentQuestion(previous);
-
-        setAnswer(
-            updatedAnswers[previous] || ""
-        );
-
+        setAnswer(updatedAnswers[previous] || "");
         setEvaluation(null);
-
         setError("");
-
         resetTranscript();
-
     };
-
 
     const goToNext = () => {
-
-        const updatedAnswers =
-            saveCurrentAnswer();
-
-        const next =
-            currentQuestion + 1;
-
+        const updatedAnswers = saveCurrentAnswer();
+        const next = currentQuestion + 1;
         setAnswers(updatedAnswers);
-
         setCurrentQuestion(next);
-
-        setAnswer(
-            updatedAnswers[next] || ""
-        );
-
+        setAnswer(updatedAnswers[next] || "");
         setEvaluation(null);
-
         setError("");
-
         resetTranscript();
-
     };
-
 
     const finishInterview = async () => {
-
-        const updatedAnswers =
-            saveCurrentAnswer();
-
+        const updatedAnswers = saveCurrentAnswer();
 
         try {
-
             setFinishing(true);
-
             setError("");
 
-            const token =
-                localStorage.getItem("token");
-
-
-            const reportRes =
-                await api.post(
-
-                    "/report",
-
-                    {
-                        questions:
-                            allQuestions,
-
-                        answers:
-                            updatedAnswers
-                    },
-
-                    {
-                        headers: {
-                            Authorization:
-                                `Bearer ${token}`
-                        }
-                    }
-
-                );
-
-
-            navigate(
+            const token = localStorage.getItem("token");
+            const reportRes = await api.post(
                 "/report",
-                {
-                    state: {
+                { questions: allQuestions, answers: updatedAnswers },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
-                        report:
-                            reportRes.data.report,
-
-                        userName:
-                            localStorage.getItem(
-                                "name"
-                            ) ||
-                            "Candidate"
-
-                    }
+            navigate("/report", {
+                state: {
+                    report: reportRes.data.report,
+                    userName: localStorage.getItem("name") || "Candidate"
                 }
-            );
-
-        }
-
-        catch (err) {
-
-            console.error(
-                "Report Error:",
-                err
-            );
-
-            setError(
-
-                err.response?.data?.message ||
-
-                "Failed to generate interview report."
-
-            );
-
-        }
-
-        finally {
-
+            });
+        } catch (err) {
+            console.error("Report Error:", err);
+            setError(err.response?.data?.message || "Failed to generate interview report.");
+        } finally {
             setFinishing(false);
-
         }
-
     };
 
-
-    const progress =
-        allQuestions.length > 0
-
-            ? (
-                ((currentQuestion + 1) /
-                    allQuestions.length) *
-                100
-            )
-
-            : 0;
-
+    const progress = allQuestions.length > 0 ? ((currentQuestion + 1) / allQuestions.length) * 100 : 0;
 
     return (
-
         <MainLayout>
-
-            {/* ==================================================
-                HEADER
-            ================================================== */}
-
-            <div
-                className="
-                    bg-gradient-to-r
-                    from-purple-600
-                    via-indigo-600
-                    to-blue-600
-                    text-white
-                    rounded-3xl
-                    p-6
-                    sm:p-8
-                    lg:p-10
-                    shadow-2xl
-                    mb-8
-                "
-            >
-
-                <p
-                    className="
-                        text-purple-100
-                        text-sm
-                        font-medium
-                    "
-                >
-                    InterviewAI
-                </p>
-
-                <h1
-                    className="
-                        text-3xl
-                        sm:text-4xl
-                        font-extrabold
-                        mt-1
-                    "
-                >
-                    🎤 AI Mock Interview
-                </h1>
-
-                <p
-                    className="
-                        mt-3
-                        text-purple-100
-                        text-sm
-                        sm:text-base
-                    "
-                >
-                    Practice with AI-generated questions
-                    based on your resume.
-                </p>
-
-            </div>
-
-
-            {/* ==================================================
-                ERROR
-            ================================================== */}
-
-            {error && (
-
-                <div
-                    className="
-                        mb-6
-                        bg-red-50
-                        dark:bg-red-900/20
-                        border
-                        border-red-200
-                        dark:border-red-800
-                        text-red-700
-                        dark:text-red-300
-                        rounded-2xl
-                        p-4
-                        font-medium
-                    "
-                >
-
-                    ⚠️ {error}
-
-                </div>
-
-            )}
-
-
-            {/* ==================================================
-                GENERATE BUTTON
-            ================================================== */}
-
-            {!questions && (
-
-                <div
-                    className="
-                        bg-white
-                        dark:bg-gray-800
-                        border
-                        border-gray-200
-                        dark:border-gray-700
-                        rounded-3xl
-                        shadow-sm
-                        p-8
-                        sm:p-12
-                        text-center
-                    "
-                >
-
-                    <div className="text-6xl">
-                        🤖
+            <div className="space-y-8">
+                {/* Banner Header */}
+                <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 border border-purple-800/40 text-white shadow-xl">
+                    <div className="relative z-10 max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-xs font-bold uppercase tracking-wider mb-3">
+                            <FiMic className="w-3.5 h-3.5" />
+                            Live AI Studio Stage
+                        </div>
+                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                            Interactive Mock Interview Studio
+                        </h1>
+                        <p className="mt-2 text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Practice dynamic AI questions, speak or type your answers, and receive instant Groq LLM feedback.
+                        </p>
                     </div>
-
-                    <h2
-                        className="
-                            mt-5
-                            text-2xl
-                            sm:text-3xl
-                            font-bold
-                            text-gray-900
-                            dark:text-white
-                        "
-                    >
-                        Ready for your interview?
-                    </h2>
-
-                    <p
-                        className="
-                            mt-3
-                            max-w-xl
-                            mx-auto
-                            text-gray-500
-                            dark:text-gray-400
-                        "
-                    >
-                        We'll generate personalized
-                        technical and behavioral questions
-                        based on your uploaded resume.
-                    </p>
-
-                    <button
-                        onClick={
-                            generateQuestions
-                        }
-                        disabled={loading}
-                        className="
-                            mt-7
-                            bg-blue-600
-                            hover:bg-blue-700
-                            disabled:bg-blue-400
-                            text-white
-                            px-8
-                            py-4
-                            rounded-xl
-                            font-bold
-                            shadow-lg
-                            hover:shadow-xl
-                            transition
-                        "
-                    >
-
-                        {loading
-                            ? "🤖 Generating..."
-                            : "🚀 Start AI Interview"}
-
-                    </button>
-
                 </div>
 
-            )}
+                {/* Error Banner */}
+                {error && (
+                    <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold flex items-center gap-3">
+                        <FiAlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+                        {error}
+                    </div>
+                )}
 
-
-            {/* ==================================================
-                INTERVIEW
-            ================================================== */}
-
-            {questions &&
-                allQuestions.length > 0 && (
-
-                    <div className="space-y-6">
-
-                        {/* PROGRESS */}
-
-                        <div
-                            className="
-                                bg-white
-                                dark:bg-gray-800
-                                border
-                                border-gray-200
-                                dark:border-gray-700
-                                rounded-2xl
-                                p-5
-                            "
-                        >
-
-                            <div
-                                className="
-                                    flex
-                                    items-center
-                                    justify-between
-                                    gap-4
-                                    mb-3
-                                "
-                            >
-
-                                <p
-                                    className="
-                                        font-semibold
-                                        text-gray-700
-                                        dark:text-gray-200
-                                    "
-                                >
-                                    Question{" "}
-                                    {currentQuestion + 1}{" "}
-                                    of{" "}
-                                    {allQuestions.length}
-                                </p>
-
-                                <p
-                                    className="
-                                        text-sm
-                                        font-semibold
-                                        text-blue-600
-                                        dark:text-blue-400
-                                    "
-                                >
-                                    {Math.round(progress)}%
-                                </p>
-
-                            </div>
-
-                            <div
-                                className="
-                                    w-full
-                                    bg-gray-200
-                                    dark:bg-gray-700
-                                    rounded-full
-                                    h-3
-                                    overflow-hidden
-                                "
-                            >
-
-                                <div
-                                    className="
-                                        bg-gradient-to-r
-                                        from-blue-500
-                                        to-purple-600
-                                        h-3
-                                        rounded-full
-                                        transition-all
-                                        duration-500
-                                    "
-                                    style={{
-                                        width:
-                                            `${progress}%`
-                                    }}
-                                />
-
-                            </div>
-
+                {/* Initial Launch Stage */}
+                {!questions && (
+                    <div className="p-8 sm:p-14 text-center rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-6">
+                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center mx-auto shadow-xl shadow-purple-500/25">
+                            <FiCpu className="w-10 h-10 animate-pulse" />
                         </div>
 
-
-                        {/* QUESTION */}
-
-                        <div
-                            className="
-                                bg-white
-                                dark:bg-gray-800
-                                border
-                                border-gray-200
-                                dark:border-gray-700
-                                rounded-3xl
-                                shadow-sm
-                                p-6
-                                sm:p-8
-                            "
-                        >
-
-                            <p
-                                className="
-                                    text-sm
-                                    font-semibold
-                                    text-blue-600
-                                    dark:text-blue-400
-                                "
-                            >
-                                Question{" "}
-                                {currentQuestion + 1}
-                            </p>
-
-                            <h2
-                                className="
-                                    mt-3
-                                    text-xl
-                                    sm:text-2xl
-                                    font-bold
-                                    leading-8
-                                    text-gray-900
-                                    dark:text-white
-                                "
-                            >
-                                {
-                                    allQuestions[
-                                        currentQuestion
-                                    ]
-                                }
+                        <div className="max-w-xl mx-auto space-y-2">
+                            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                                Ready to Practice Your Interview?
                             </h2>
-
+                            <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
+                                Our AI engine will inspect your profile and resume background to construct realistic technical & behavioral questions.
+                            </p>
                         </div>
 
-
-                        {/* ANSWER */}
-
-                        <div
-                            className="
-                                bg-white
-                                dark:bg-gray-800
-                                border
-                                border-gray-200
-                                dark:border-gray-700
-                                rounded-3xl
-                                shadow-sm
-                                p-6
-                                sm:p-8
-                            "
-                        >
-
-                            <label
+                        <div>
+                            <button
+                                type="button"
+                                onClick={generateQuestions}
+                                disabled={loading}
                                 className="
-                                    block
-                                    text-lg
-                                    font-bold
-                                    text-gray-900
-                                    dark:text-white
-                                    mb-3
+                                    inline-flex items-center gap-2 px-9 py-4 rounded-2xl font-bold text-base text-white
+                                    bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 hover:opacity-95
+                                    disabled:opacity-50 shadow-xl shadow-purple-500/30 hover:scale-105 transition-all duration-200 cursor-pointer
                                 "
                             >
-                                Your Answer
-                            </label>
+                                {loading ? (
+                                    <span className="flex items-center gap-2">
+                                        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Generating Questions...
+                                    </span>
+                                ) : (
+                                    <>
+                                        <FiMic className="w-5 h-5" />
+                                        Start Practice Interview Session
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Active Interview Stage */}
+                {questions && allQuestions.length > 0 && (
+                    <div className="space-y-6">
+                        {/* Progress Bar Header */}
+                        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-3">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                    Question {currentQuestion + 1} of {allQuestions.length}
+                                </span>
+                                <span className="text-xs font-extrabold text-indigo-600 dark:text-indigo-400">
+                                    {Math.round(progress)}% Completed
+                                </span>
+                            </div>
+                            <div className="w-full h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                                <motion.div
+                                    animate={{ width: `${progress}%` }}
+                                    transition={{ duration: 0.4 }}
+                                    className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Question Card */}
+                        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-3">
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                                    Prompt #{currentQuestion + 1}
+                                </span>
+                            </div>
+                            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-relaxed">
+                                {allQuestions[currentQuestion]}
+                            </h2>
+                        </div>
+
+                        {/* Answer Studio Box */}
+                        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <FiVolume2 className="text-indigo-500" />
+                                    Your Answer Transcript
+                                </label>
+
+                                {listening && (
+                                    <span className="flex items-center gap-2 text-xs font-bold text-rose-500 animate-pulse">
+                                        <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                                        Recording Audio...
+                                    </span>
+                                )}
+                            </div>
 
                             <textarea
-                                rows={7}
-                                value={
-                                    answer
-                                }
-                                onChange={(event) =>
-                                    setAnswer(
-                                        event.target.value
-                                    )
-                                }
-                                placeholder="Type your answer here..."
+                                rows={6}
+                                value={answer}
+                                onChange={(e) => setAnswer(e.target.value)}
+                                placeholder="Speak into your microphone or type your response here..."
                                 className="
-                                    w-full
-                                    border
-                                    border-gray-300
-                                    dark:border-gray-600
-                                    rounded-2xl
-                                    p-4
-                                    bg-white
-                                    dark:bg-gray-900
-                                    text-gray-900
-                                    dark:text-white
-                                    placeholder-gray-400
-                                    resize-y
-                                    focus:ring-2
-                                    focus:ring-blue-500
-                                    focus:border-blue-500
+                                    w-full p-4 rounded-2xl text-sm font-medium
+                                    bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800
+                                    text-slate-900 dark:text-white placeholder-slate-400
+                                    focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
+                                    transition-all duration-200 resize-y
                                 "
                             />
 
-
-                            {/* SPEECH BUTTONS */}
-
-                            <div
-                                className="
-                                    flex
-                                    flex-wrap
-                                    gap-3
-                                    mt-4
-                                "
-                            >
-
-                                <button
-                                    onClick={() => {
-
-                                        resetTranscript();
-
-                                        SpeechRecognition.startListening(
-                                            {
-                                                continuous:
-                                                    true,
-
-                                                language:
-                                                    "en-US"
-                                            }
-                                        );
-
-                                    }}
-                                    className="
-                                        bg-red-500
-                                        hover:bg-red-600
-                                        text-white
-                                        px-4
-                                        py-2
-                                        rounded-xl
-                                        font-semibold
-                                        transition
-                                    "
-                                >
-                                    🎙 Start
-                                </button>
-
-
-                                <button
-                                    onClick={() => {
-
-                                        SpeechRecognition.stopListening();
-
-                                        if (
-                                            transcript
-                                        ) {
-
-                                            setAnswer(
-                                                transcript
-                                            );
-
-                                        }
-
-                                    }}
-                                    className="
-                                        bg-green-600
-                                        hover:bg-green-700
-                                        text-white
-                                        px-4
-                                        py-2
-                                        rounded-xl
-                                        font-semibold
-                                        transition
-                                    "
-                                >
-                                    ⏹ Stop
-                                </button>
-
-
-                                <button
-                                    onClick={() => {
-
-                                        SpeechRecognition.stopListening();
-
-                                        resetTranscript();
-
-                                        setAnswer("");
-
-                                    }}
-                                    className="
-                                        bg-gray-600
-                                        hover:bg-gray-700
-                                        text-white
-                                        px-4
-                                        py-2
-                                        rounded-xl
-                                        font-semibold
-                                        transition
-                                    "
-                                >
-                                    🗑 Clear
-                                </button>
-
-                            </div>
-
-
-                            <p
-                                className="
-                                    mt-3
-                                    text-sm
-                                    font-semibold
-                                    text-gray-500
-                                    dark:text-gray-400
-                                "
-                            >
-                                {listening
-                                    ? "🎙 Listening..."
-                                    : "🎤 Microphone Stopped"}
-                            </p>
-
-
-                            {/* EVALUATE */}
-
-                            <button
-                                onClick={
-                                    evaluateAnswer
-                                }
-                                disabled={
-                                    evaluating ||
-                                    !answer.trim()
-                                }
-                                className="
-                                    mt-6
-                                    w-full
-                                    sm:w-auto
-                                    bg-green-700
-                                    hover:bg-green-800
-                                    disabled:bg-green-300
-                                    dark:disabled:bg-green-900
-                                    text-white
-                                    px-7
-                                    py-3
-                                    rounded-xl
-                                    font-bold
-                                    shadow-md
-                                    transition
-                                "
-                            >
-
-                                {evaluating
-                                    ? "🤖 Evaluating..."
-                                    : "⭐ Evaluate Answer"}
-
-                            </button>
-
-                        </div>
-
-
-                        {/* EVALUATION */}
-
-                        {evaluation && (
-
-                            <div
-                                className="
-                                    bg-white
-                                    dark:bg-gray-800
-                                    border
-                                    border-gray-200
-                                    dark:border-gray-700
-                                    rounded-3xl
-                                    shadow-sm
-                                    p-6
-                                    sm:p-8
-                                "
-                            >
-
-                                <h2
-                                    className="
-                                        text-2xl
-                                        font-bold
-                                        text-gray-900
-                                        dark:text-white
-                                    "
-                                >
-                                    ⭐ AI Evaluation
-                                </h2>
-
-
-                                <div
-                                    className="
-                                        mt-5
-                                        flex
-                                        flex-col
-                                        sm:flex-row
-                                        sm:items-center
-                                        gap-5
-                                    "
-                                >
-
-                                    <div
+                            {/* Voice Control Toolbar */}
+                            <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            resetTranscript();
+                                            SpeechRecognition.startListening({ continuous: true, language: "en-US" });
+                                        }}
                                         className="
-                                            text-5xl
-                                            font-extrabold
-                                            text-green-600
-                                            dark:text-green-400
+                                            inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-white
+                                            bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/20 transition-colors cursor-pointer
                                         "
                                     >
-                                        {evaluation.score}/10
-                                    </div>
+                                        <FiMic className="w-4 h-4" />
+                                        Start Mic
+                                    </button>
 
-                                    <div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            SpeechRecognition.stopListening();
+                                            if (transcript) setAnswer(transcript);
+                                        }}
+                                        className="
+                                            inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-white
+                                            bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-colors cursor-pointer
+                                        "
+                                    >
+                                        <FiSquare className="w-4 h-4" />
+                                        Stop Mic
+                                    </button>
 
-                                        <p
-                                            className="
-                                                text-sm
-                                                text-gray-500
-                                                dark:text-gray-400
-                                            "
-                                        >
-                                            AI Score
-                                        </p>
-
-                                        <p
-                                            className="
-                                                mt-1
-                                                text-gray-700
-                                                dark:text-gray-300
-                                            "
-                                        >
-                                            Based on relevance,
-                                            clarity and technical
-                                            understanding.
-                                        </p>
-
-                                    </div>
-
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            SpeechRecognition.stopListening();
+                                            resetTranscript();
+                                            setAnswer("");
+                                        }}
+                                        className="
+                                            inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-slate-300
+                                            bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer
+                                        "
+                                    >
+                                        <FiTrash2 className="w-4 h-4" />
+                                        Clear Answer
+                                    </button>
                                 </div>
 
+                                <button
+                                    type="button"
+                                    onClick={evaluateAnswer}
+                                    disabled={evaluating || !answer.trim()}
+                                    className="
+                                        inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-xs text-white
+                                        bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-95
+                                        disabled:opacity-50 shadow-md shadow-emerald-600/20 transition-all duration-200 cursor-pointer
+                                    "
+                                >
+                                    {evaluating ? "Evaluating..." : "Evaluate Response"}
+                                </button>
+                            </div>
+                        </div>
 
-                                <div className="mt-7">
+                        {/* Evaluation Feedback Card */}
+                        <AnimatePresence>
+                            {evaluation && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 15 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                            <FiStar className="text-amber-400" />
+                                            AI Rating & Feedback
+                                        </h3>
+                                        <span className="text-2xl font-extrabold text-emerald-500">
+                                            {evaluation.score} <span className="text-sm text-slate-400">/ 10</span>
+                                        </span>
+                                    </div>
 
-                                    <h3
-                                        className="
-                                            font-bold
-                                            text-gray-900
-                                            dark:text-white
-                                        "
-                                    >
-                                        Feedback
-                                    </h3>
-
-                                    <p
-                                        className="
-                                            mt-3
-                                            text-gray-700
-                                            dark:text-gray-300
-                                            leading-7
-                                        "
-                                    >
-                                        {
-                                            evaluation.feedback ||
-                                            "No feedback available."
-                                        }
+                                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                                        {evaluation.feedback || "Answer evaluated successfully."}
                                     </p>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
-                                </div>
-
-                            </div>
-
-                        )}
-
-
-                        {/* NAVIGATION */}
-
-                        <div
-                            className="
-                                flex
-                                flex-col
-                                sm:flex-row
-                                justify-between
-                                gap-3
-                            "
-                        >
-
+                        {/* Bottom Navigation Buttons */}
+                        <div className="flex items-center justify-between gap-4 pt-4">
                             <button
-                                disabled={
-                                    currentQuestion === 0
-                                }
-                                onClick={
-                                    goToPrevious
-                                }
+                                type="button"
+                                disabled={currentQuestion === 0}
+                                onClick={goToPrevious}
                                 className="
-                                    bg-gray-600
-                                    hover:bg-gray-700
-                                    disabled:bg-gray-300
-                                    dark:disabled:bg-gray-800
-                                    text-white
-                                    px-6
-                                    py-3
-                                    rounded-xl
-                                    font-semibold
-                                    transition
+                                    inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm text-slate-300
+                                    bg-slate-800 hover:bg-slate-700 disabled:opacity-40 transition-colors cursor-pointer
                                 "
                             >
-                                ← Previous
+                                <FiArrowLeft className="w-4 h-4" />
+                                Previous Question
                             </button>
 
-
-                            {currentQuestion <
-                                allQuestions.length - 1 ? (
-
+                            {currentQuestion < allQuestions.length - 1 ? (
                                 <button
-                                    onClick={
-                                        goToNext
-                                    }
+                                    type="button"
+                                    onClick={goToNext}
                                     className="
-                                        bg-blue-600
-                                        hover:bg-blue-700
-                                        text-white
-                                        px-6
-                                        py-3
-                                        rounded-xl
-                                        font-semibold
-                                        transition
+                                        inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white
+                                        bg-indigo-600 hover:bg-indigo-500 shadow-md shadow-indigo-600/20 transition-colors cursor-pointer
                                     "
                                 >
-                                    Next →
+                                    Next Question
+                                    <FiArrowRight className="w-4 h-4" />
                                 </button>
-
                             ) : (
-
                                 <button
-                                    onClick={
-                                        finishInterview
-                                    }
-                                    disabled={
-                                        finishing
-                                    }
+                                    type="button"
+                                    onClick={finishInterview}
+                                    disabled={finishing}
                                     className="
-                                        bg-purple-600
-                                        hover:bg-purple-700
-                                        disabled:bg-purple-400
-                                        text-white
-                                        px-6
-                                        py-3
-                                        rounded-xl
-                                        font-bold
-                                        transition
+                                        inline-flex items-center gap-2 px-7 py-3 rounded-xl font-bold text-sm text-white
+                                        bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95
+                                        disabled:opacity-50 shadow-lg shadow-purple-500/25 transition-all duration-200 cursor-pointer
                                     "
                                 >
-
-                                    {finishing
-                                        ? "🤖 Generating Report..."
-                                        : "🎉 Finish Interview"}
-
+                                    {finishing ? "Generating Report..." : "Finish Interview & Get Report"}
+                                    <FiAward className="w-4 h-4" />
                                 </button>
-
                             )}
-
                         </div>
-
                     </div>
-
                 )}
-
+            </div>
         </MainLayout>
-
     );
-
 }
 
 export default Interview;

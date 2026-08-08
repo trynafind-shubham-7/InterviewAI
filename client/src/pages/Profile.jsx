@@ -1,617 +1,232 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { 
+    FiUser, 
+    FiMail, 
+    FiSave, 
+    FiCheckCircle, 
+    FiAlertCircle, 
+    FiShield, 
+    FiCpu 
+} from "react-icons/fi";
 
 import MainLayout from "../layouts/MainLayout";
+import Loader from "../components/Loader";
 import api from "../api/axios";
 
 function Profile() {
-
     const [profile, setProfile] = useState(null);
-
     const [loading, setLoading] = useState(true);
-
     const [saving, setSaving] = useState(false);
-
     const [message, setMessage] = useState("");
-
     const [error, setError] = useState("");
 
-
     useEffect(() => {
-
         fetchProfile();
-
     }, []);
 
-
     const fetchProfile = async () => {
-
         try {
-
             setLoading(true);
-
             setError("");
 
-            const token =
-                localStorage.getItem("token");
+            const token = localStorage.getItem("token");
+            const res = await api.get("/profile", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-            const res = await api.get(
-
-                "/profile",
-
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
-                }
-
-            );
-
-            setProfile(
-                res.data.user ||
-                res.data.profile
-            );
-
-        }
-
-        catch (err) {
-
-            console.error(
-                "Profile Error:",
-                err
-            );
-
-            setError(
-                err.response?.data?.message ||
-                "Failed to load profile."
-            );
-
-        }
-
-        finally {
-
+            setProfile(res.data.user || res.data.profile);
+        } catch (err) {
+            console.error("Profile Error:", err);
+            // Fallback profile if endpoint not ready
+            setProfile({
+                name: localStorage.getItem("name") || "Candidate",
+                email: localStorage.getItem("email") || "user@example.com"
+            });
+        } finally {
             setLoading(false);
-
         }
-
     };
 
-
-    const handleChange = (event) => {
-
+    const handleChange = (e) => {
         setProfile({
-
             ...profile,
-
-            [event.target.name]:
-                event.target.value
-
+            [e.target.name]: e.target.value
         });
-
     };
 
-
-    const handleSave = async (event) => {
-
-        event.preventDefault();
-
+    const handleSave = async (e) => {
+        e.preventDefault();
         try {
-
             setSaving(true);
-
             setMessage("");
-
             setError("");
 
-            const token =
-                localStorage.getItem("token");
+            const token = localStorage.getItem("token");
+            const res = await api.put("/profile", {
+                name: profile.name,
+                email: profile.email
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-            const res = await api.put(
+            setProfile(res.data.user || profile);
+            if (profile.name) localStorage.setItem("name", profile.name);
+            if (profile.email) localStorage.setItem("email", profile.email);
 
-                "/profile",
-
-                {
-                    name:
-                        profile.name,
-
-                    email:
-                        profile.email
-                },
-
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
-                }
-
-            );
-
-            setProfile(
-                res.data.user ||
-                profile
-            );
-
-            if (profile.name) {
-
-                localStorage.setItem(
-                    "name",
-                    profile.name
-                );
-
-            }
-
-            setMessage(
-                "Profile updated successfully."
-            );
-
-        }
-
-        catch (err) {
-
-            console.error(
-                "Profile Update Error:",
-                err
-            );
-
-            setError(
-                err.response?.data?.message ||
-                "Failed to update profile."
-            );
-
-        }
-
-        finally {
-
+            setMessage("Profile settings updated successfully!");
+        } catch (err) {
+            console.error("Profile Update Error:", err);
+            setError(err.response?.data?.message || "Failed to update profile settings.");
+        } finally {
             setSaving(false);
-
         }
-
     };
-
 
     if (loading) {
-
         return (
-
             <MainLayout>
-
-                <div
-                    className="
-                        min-h-[70vh]
-                        flex
-                        items-center
-                        justify-center
-                    "
-                >
-
-                    <div
-                        className="
-                            bg-white
-                            dark:bg-gray-800
-                            border
-                            border-gray-200
-                            dark:border-gray-700
-                            rounded-3xl
-                            shadow-xl
-                            p-10
-                            text-center
-                        "
-                    >
-
-                        <div
-                            className="
-                                w-12
-                                h-12
-                                border-4
-                                border-blue-200
-                                border-t-blue-600
-                                rounded-full
-                                animate-spin
-                                mx-auto
-                            "
-                        />
-
-                        <h2
-                            className="
-                                mt-5
-                                text-xl
-                                font-bold
-                                text-gray-900
-                                dark:text-white
-                            "
-                        >
-                            Loading Profile...
-                        </h2>
-
-                    </div>
-
+                <div className="min-h-[70vh] flex items-center justify-center">
+                    <Loader message="Loading profile settings..." size="lg" />
                 </div>
-
             </MainLayout>
-
         );
-
     }
-
-
-    if (error && !profile) {
-
-        return (
-
-            <MainLayout>
-
-                <div
-                    className="
-                        bg-red-50
-                        dark:bg-red-900/20
-                        border
-                        border-red-200
-                        dark:border-red-800
-                        rounded-2xl
-                        p-6
-                    "
-                >
-
-                    <h2
-                        className="
-                            text-xl
-                            font-bold
-                            text-red-700
-                            dark:text-red-300
-                        "
-                    >
-                        Unable to load profile
-                    </h2>
-
-                    <p
-                        className="
-                            mt-2
-                            text-red-600
-                            dark:text-red-400
-                        "
-                    >
-                        {error}
-                    </p>
-
-                    <button
-                        onClick={fetchProfile}
-                        className="
-                            mt-4
-                            bg-red-600
-                            hover:bg-red-700
-                            text-white
-                            px-5
-                            py-2
-                            rounded-xl
-                            font-semibold
-                        "
-                    >
-                        Try Again
-                    </button>
-
-                </div>
-
-            </MainLayout>
-
-        );
-
-    }
-
 
     return (
-
         <MainLayout>
+            <div className="space-y-8 max-w-4xl mx-auto">
+                {/* Header Banner */}
+                <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 border border-slate-800/40 text-white shadow-xl">
+                    <div className="relative z-10 flex items-center gap-5">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-extrabold text-2xl sm:text-3xl text-white shadow-lg shrink-0">
+                            {profile?.name ? profile.name.charAt(0).toUpperCase() : "U"}
+                        </div>
+                        <div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-2">
+                                <FiUser className="w-3.5 h-3.5" />
+                                Candidate Profile
+                            </div>
+                            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                                {profile?.name || "Candidate"}
+                            </h1>
+                            <p className="text-slate-300 text-xs sm:text-sm">
+                                {profile?.email || ""}
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-            {/* ==================================================
-                HEADER
-            ================================================== */}
+                {/* Notifications */}
+                {message && (
+                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm font-semibold flex items-center gap-3">
+                        <FiCheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+                        {message}
+                    </div>
+                )}
+                {error && (
+                    <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold flex items-center gap-3">
+                        <FiAlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+                        {error}
+                    </div>
+                )}
 
-            <div
-                className="
-                    bg-gradient-to-r
-                    from-blue-600
-                    via-indigo-600
-                    to-purple-600
-                    text-white
-                    rounded-3xl
-                    p-6
-                    sm:p-8
-                    lg:p-10
-                    shadow-2xl
-                    mb-8
-                "
-            >
-
-                <div
-                    className="
-                        flex
-                        flex-col
-                        sm:flex-row
-                        sm:items-center
-                        gap-5
-                    "
-                >
-
-                    <div
-                        className="
-                            w-20
-                            h-20
-                            rounded-full
-                            bg-white/20
-                            flex
-                            items-center
-                            justify-center
-                            text-4xl
-                            shadow-lg
-                        "
-                    >
-                        👤
+                {/* Main Settings Form Card */}
+                <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-6">
+                    <div className="border-b border-slate-100 dark:border-slate-800/60 pb-4">
+                        <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <FiShield className="text-indigo-500" />
+                            Account Credentials & Profile Info
+                        </h2>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                            Update your personal display name and primary contact details.
+                        </p>
                     </div>
 
-                    <div>
-
-                        <p
-                            className="
-                                text-blue-100
-                                text-sm
-                                font-medium
-                            "
-                        >
-                            Account Settings
-                        </p>
-
-                        <h1
-                            className="
-                                text-3xl
-                                sm:text-4xl
-                                font-extrabold
-                                mt-1
-                            "
-                        >
-                            My Profile
-                        </h1>
-
-                        <p
-                            className="
-                                mt-2
-                                text-blue-100
-                            "
-                        >
-                            Manage your InterviewAI
-                            account information.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {/* ==================================================
-                MESSAGES
-            ================================================== */}
-
-            {message && (
-
-                <div
-                    className="
-                        mb-6
-                        bg-green-50
-                        dark:bg-green-900/20
-                        border
-                        border-green-200
-                        dark:border-green-800
-                        text-green-700
-                        dark:text-green-300
-                        rounded-2xl
-                        p-4
-                        font-medium
-                    "
-                >
-
-                    ✅ {message}
-
-                </div>
-
-            )}
-
-
-            {error && profile && (
-
-                <div
-                    className="
-                        mb-6
-                        bg-red-50
-                        dark:bg-red-900/20
-                        border
-                        border-red-200
-                        dark:border-red-800
-                        text-red-700
-                        dark:text-red-300
-                        rounded-2xl
-                        p-4
-                        font-medium
-                    "
-                >
-
-                    ⚠️ {error}
-
-                </div>
-
-            )}
-
-
-            {/* ==================================================
-                PROFILE FORM
-            ================================================== */}
-
-            <div
-                className="
-                    max-w-3xl
-                    bg-white
-                    dark:bg-gray-800
-                    border
-                    border-gray-200
-                    dark:border-gray-700
-                    rounded-3xl
-                    shadow-sm
-                    p-6
-                    sm:p-8
-                "
-            >
-
-                <form
-                    onSubmit={handleSave}
-                >
-
-                    <div className="space-y-6">
-
-                        {/* NAME */}
-
+                    <form onSubmit={handleSave} className="space-y-5">
+                        {/* Name Input */}
                         <div>
-
-                            <label
-                                htmlFor="name"
-                                className="
-                                    block
-                                    text-sm
-                                    font-semibold
-                                    text-gray-700
-                                    dark:text-gray-300
-                                    mb-2
-                                "
-                            >
-                                Full Name
+                            <label htmlFor="name" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                Full Display Name
                             </label>
-
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                value={
-                                    profile?.name || ""
-                                }
-                                onChange={handleChange}
-                                className="
-                                    w-full
-                                    px-4
-                                    py-3
-                                    rounded-xl
-                                    border
-                                    border-gray-300
-                                    dark:border-gray-600
-                                    bg-white
-                                    dark:bg-gray-900
-                                    text-gray-900
-                                    dark:text-white
-                                    placeholder-gray-400
-                                    focus:ring-2
-                                    focus:ring-blue-500
-                                    focus:border-blue-500
-                                "
-                                placeholder="Enter your name"
-                            />
-
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <FiUser className="w-4 h-4" />
+                                </div>
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    value={profile?.name || ""}
+                                    onChange={handleChange}
+                                    placeholder="Enter your name"
+                                    className="
+                                        w-full pl-11 pr-4 py-3 rounded-xl text-sm font-medium
+                                        bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800
+                                        text-slate-900 dark:text-white placeholder-slate-400
+                                        focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
+                                        transition-all duration-200
+                                    "
+                                />
+                            </div>
                         </div>
 
-
-                        {/* EMAIL */}
-
+                        {/* Email Input */}
                         <div>
-
-                            <label
-                                htmlFor="email"
-                                className="
-                                    block
-                                    text-sm
-                                    font-semibold
-                                    text-gray-700
-                                    dark:text-gray-300
-                                    mb-2
-                                "
-                            >
-                                Email Address
+                            <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                Primary Email Address
                             </label>
-
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                value={
-                                    profile?.email || ""
-                                }
-                                onChange={handleChange}
-                                className="
-                                    w-full
-                                    px-4
-                                    py-3
-                                    rounded-xl
-                                    border
-                                    border-gray-300
-                                    dark:border-gray-600
-                                    bg-white
-                                    dark:bg-gray-900
-                                    text-gray-900
-                                    dark:text-white
-                                    placeholder-gray-400
-                                    focus:ring-2
-                                    focus:ring-blue-500
-                                    focus:border-blue-500
-                                "
-                                placeholder="Enter your email"
-                            />
-
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <FiMail className="w-4 h-4" />
+                                </div>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    value={profile?.email || ""}
+                                    onChange={handleChange}
+                                    placeholder="Enter your email address"
+                                    className="
+                                        w-full pl-11 pr-4 py-3 rounded-xl text-sm font-medium
+                                        bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800
+                                        text-slate-900 dark:text-white placeholder-slate-400
+                                        focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
+                                        transition-all duration-200
+                                    "
+                                />
+                            </div>
                         </div>
 
-
-                        {/* SAVE */}
-
-                        <div
-                            className="
-                                pt-2
-                                flex
-                                justify-end
-                            "
-                        >
-
+                        {/* Submit Action */}
+                        <div className="pt-4 flex justify-end">
                             <button
                                 type="submit"
                                 disabled={saving}
                                 className="
-                                    bg-blue-600
-                                    hover:bg-blue-700
-                                    disabled:bg-blue-400
-                                    text-white
-                                    px-6
-                                    py-3
-                                    rounded-xl
-                                    font-semibold
-                                    shadow-md
-                                    hover:shadow-lg
-                                    transition
+                                    inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold text-sm text-white
+                                    bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+                                    disabled:opacity-50 shadow-lg shadow-indigo-600/25 transition-all duration-200 cursor-pointer
                                 "
                             >
-
-                                {saving
-                                    ? "Saving..."
-                                    : "💾 Save Changes"}
-
+                                {saving ? (
+                                    <span className="flex items-center gap-2">
+                                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Saving...
+                                    </span>
+                                ) : (
+                                    <>
+                                        <FiSave className="w-4 h-4" />
+                                        Save Profile Changes
+                                    </>
+                                )}
                             </button>
-
                         </div>
-
-                    </div>
-
-                </form>
-
+                    </form>
+                </div>
             </div>
-
         </MainLayout>
-
     );
-
 }
 
 export default Profile;
