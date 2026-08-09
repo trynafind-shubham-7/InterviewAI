@@ -9,7 +9,7 @@ Upload your resume, understand where you stand, practice realistic interviews, a
 <img width="1916" height="966" alt="image" src="https://github.com/user-attachments/assets/55fac268-5307-4ac8-a51a-32bb1ab08a2d" />
 
 
-**[Live Demo](https://interview-ai-git-main-trynafind-shubham-7s-projects.vercel.app/)** · **[GitHub](https://github.com/trynafind-shubham-7/InterviewAI)**
+**[Live Demo](https://interview-ai-plum-omega.vercel.app/)** · **[GitHub](https://github.com/trynafind-shubham-7/InterviewAI)**
 
 ---
 
