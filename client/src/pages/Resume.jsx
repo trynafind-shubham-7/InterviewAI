@@ -84,30 +84,26 @@ function Resume() {
     return (
         <MainLayout>
             <div className="space-y-8">
-                {/* Header Banner */}
-                <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 border border-indigo-800/40 text-white shadow-xl">
-                    <div className="relative z-10 max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider mb-3">
+                <div className="surface-card p-6 sm:p-8">
+                    <div className="max-w-2xl">
+                        <div className="pill mb-3">
                             <FiCpu className="w-3.5 h-3.5" />
                             AI Resume Intelligence
                         </div>
-                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text)]">
                             ATS Resume Analyzer
                         </h1>
-                        <p className="mt-2 text-slate-300 text-sm sm:text-base leading-relaxed">
+                        <p className="mt-2 text-sm sm:text-base leading-relaxed text-[var(--text-muted)]">
                             Upload your resume to check your score, find missing job keywords, and ensure companies don't auto-reject your application.
                         </p>
                     </div>
                 </div>
 
-                {/* Beginner Explanatory Banner */}
-                <div className="p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-slate-800 dark:text-slate-200 flex items-start gap-4">
-                    <FiInfo className="w-6 h-6 text-indigo-500 shrink-0 mt-0.5" />
+                <div className="surface-panel p-5 flex items-start gap-4">
+                    <FiInfo className="w-6 h-6 text-[var(--primary)] shrink-0 mt-0.5" />
                     <div className="text-xs sm:text-sm leading-relaxed space-y-1">
-                        <h4 className="font-bold text-slate-900 dark:text-white">
-                            What is an ATS Resume Score?
-                        </h4>
-                        <p className="text-slate-600 dark:text-slate-300">
+                        <h4 className="font-bold text-[var(--text)]">What is an ATS Resume Score?</h4>
+                        <p className="text-[var(--text-muted)]">
                             <strong>ATS (Applicant Tracking System)</strong> is automated software recruiters use to filter resumes. Our AI reads your PDF, grades keyword strength, and highlights missing skills so you can optimize your resume before submitting applications.
                         </p>
                     </div>

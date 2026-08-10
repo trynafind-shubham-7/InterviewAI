@@ -73,26 +73,24 @@ function History() {
     return (
         <MainLayout>
             <div className="space-y-8">
-                {/* Header Banner */}
-                <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800/40 text-white shadow-xl">
-                    <div className="relative z-10 max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-3">
+                <div className="surface-card p-6 sm:p-8">
+                    <div className="max-w-2xl">
+                        <div className="pill mb-3">
                             <FiClock className="w-3.5 h-3.5" />
                             Session History & Logs
                         </div>
-                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text)]">
                             Interview Logs
                         </h1>
-                        <p className="mt-2 text-slate-300 text-sm sm:text-base leading-relaxed">
+                        <p className="mt-2 text-sm sm:text-base leading-relaxed text-[var(--text-muted)]">
                             Review your past questions, transcript answers, and AI-assigned ratings to measure your progress.
                         </p>
                     </div>
                 </div>
 
-                {/* Filter / Search Bar */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="relative w-full sm:w-80">
-                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[var(--text-muted)]">
                             <FiSearch className="w-4 h-4" />
                         </div>
                         <input
@@ -100,17 +98,11 @@ function History() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search questions or keywords..."
-                            className="
-                                w-full pl-10 pr-4 py-2.5 rounded-xl text-sm font-medium
-                                bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800
-                                text-slate-900 dark:text-white placeholder-slate-400
-                                focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
-                                transition-all duration-200
-                            "
+                            className="input-shell pl-10 pr-4 py-2.5 text-sm"
                         />
                     </div>
 
-                    <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    <div className="text-xs font-semibold text-[var(--text-muted)]">
                         Showing {filteredHistory.length} of {history.length} Session Records
                     </div>
                 </div>

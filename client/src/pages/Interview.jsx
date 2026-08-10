@@ -180,17 +180,16 @@ function Interview() {
     return (
         <MainLayout>
             <div className="space-y-8">
-                {/* Banner Header */}
-                <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 border border-purple-800/40 text-white shadow-xl">
-                    <div className="relative z-10 max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-xs font-bold uppercase tracking-wider mb-3">
+                <div className="surface-card p-6 sm:p-8">
+                    <div className="max-w-2xl">
+                        <div className="pill mb-3">
                             <FiMic className="w-3.5 h-3.5" />
                             Live AI Studio Stage
                         </div>
-                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text)]">
                             Interactive Mock Interview Studio
                         </h1>
-                        <p className="mt-2 text-slate-300 text-sm sm:text-base leading-relaxed">
+                        <p className="mt-2 text-sm sm:text-base leading-relaxed text-[var(--text-muted)]">
                             Practice dynamic AI questions, speak or type your answers, and receive instant Groq LLM feedback.
                         </p>
                     </div>

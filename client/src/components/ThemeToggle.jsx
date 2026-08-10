@@ -7,41 +7,20 @@ function ThemeToggle() {
 
     return (
         <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={toggleDarkMode}
             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-            className="
-                relative
-                flex
-                items-center
-                justify-center
-                w-10
-                h-10
-                rounded-xl
-                bg-slate-100
-                dark:bg-slate-800/80
-                text-slate-700
-                dark:text-amber-400
-                hover:bg-slate-200
-                dark:hover:bg-slate-700
-                border
-                border-slate-200/80
-                dark:border-slate-700/60
-                shadow-sm
-                transition-colors
-                duration-200
-                cursor-pointer
-            "
+            className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--panel-soft)] text-[var(--text)] border border-[var(--border)] shadow-sm cursor-pointer"
         >
             <motion.div
                 key={darkMode ? "dark" : "light"}
-                initial={{ scale: 0.5, rotate: -90, opacity: 0 }}
+                initial={{ scale: 0.7, rotate: -60, opacity: 0 }}
                 animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
             >
-                {darkMode ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5 text-indigo-600" />}
+                {darkMode ? <FiSun className="w-4 h-4 text-[var(--warning)]" /> : <FiMoon className="w-4 h-4 text-[var(--primary)]" />}
             </motion.div>
         </motion.button>
     );

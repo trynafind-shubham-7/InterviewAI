@@ -20,43 +20,30 @@ function ScoreChart({ data = [] }) {
     ];
 
     return (
-        <div className="w-full h-[320px] sm:h-[360px]">
+        <div className="w-full h-[300px] sm:h-[340px]">
             <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                    data={formattedData}
-                    margin={{ top: 20, right: 20, left: -20, bottom: 0 }}
-                >
+                <AreaChart data={formattedData} margin={{ top: 16, right: 12, left: -18, bottom: 0 }}>
                     <defs>
                         <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
-                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#1f5eff" stopOpacity={0.28} />
+                            <stop offset="95%" stopColor="#1f5eff" stopOpacity={0.02} />
                         </linearGradient>
                     </defs>
 
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.15)" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.2)" />
 
-                    <XAxis
-                        dataKey="name"
-                        tickLine={false}
-                        axisLine={false}
-                        tick={{ fill: "#94a3b8", fontSize: 12 }}
-                    />
-                    <YAxis
-                        domain={[0, 10]}
-                        tickLine={false}
-                        axisLine={false}
-                        tick={{ fill: "#94a3b8", fontSize: 12 }}
-                    />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "var(--text-muted)", fontSize: 12 }} />
+                    <YAxis domain={[0, 10]} tickLine={false} axisLine={false} tick={{ fill: "var(--text-muted)", fontSize: 12 }} />
 
                     <Tooltip
                         contentStyle={{
                             backgroundColor: "var(--chart-tooltip-bg)",
                             borderColor: "var(--chart-tooltip-border)",
-                            borderRadius: "16px",
-                            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                            borderRadius: "12px",
                             color: "var(--chart-tooltip-text)",
-                            padding: "10px 14px",
-                            fontSize: "13px",
+                            boxShadow: "0 10px 24px rgba(15, 23, 42, 0.08)",
+                            padding: "10px 12px",
+                            fontSize: "12px",
                             fontWeight: "600"
                         }}
                     />
@@ -64,12 +51,12 @@ function ScoreChart({ data = [] }) {
                     <Area
                         type="monotone"
                         dataKey="score"
-                        stroke="#6366f1"
+                        stroke="#1f5eff"
                         strokeWidth={3}
                         fillOpacity={1}
                         fill="url(#scoreGradient)"
-                        dot={{ r: 4, fill: "#6366f1", strokeWidth: 2, stroke: "#ffffff" }}
-                        activeDot={{ r: 7, fill: "#6366f1", strokeWidth: 3, stroke: "#ffffff" }}
+                        dot={{ r: 4, fill: "#1f5eff", strokeWidth: 2, stroke: "#ffffff" }}
+                        activeDot={{ r: 6, fill: "#1f5eff", strokeWidth: 2, stroke: "#ffffff" }}
                     />
                 </AreaChart>
             </ResponsiveContainer>

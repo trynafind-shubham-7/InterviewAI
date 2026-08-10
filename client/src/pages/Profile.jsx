@@ -96,61 +96,55 @@ function Profile() {
     return (
         <MainLayout>
             <div className="space-y-8 max-w-4xl mx-auto">
-                {/* Header Banner */}
-                <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 border border-slate-800/40 text-white shadow-xl">
-                    <div className="relative z-10 flex items-center gap-5">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-extrabold text-2xl sm:text-3xl text-white shadow-lg shrink-0">
+                <div className="surface-card p-6 sm:p-8">
+                    <div className="flex items-center gap-4">
+                        <div className="photo-badge w-16 h-16 text-2xl sm:text-3xl">
                             {profile?.name ? profile.name.charAt(0).toUpperCase() : "U"}
                         </div>
                         <div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-2">
+                            <div className="pill mb-2">
                                 <FiUser className="w-3.5 h-3.5" />
                                 Candidate Profile
                             </div>
-                            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text)]">
                                 {profile?.name || "Candidate"}
                             </h1>
-                            <p className="text-slate-300 text-xs sm:text-sm">
-                                {profile?.email || ""}
-                            </p>
+                            <p className="text-sm text-[var(--text-muted)]">{profile?.email || ""}</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Notifications */}
                 {message && (
-                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm font-semibold flex items-center gap-3">
-                        <FiCheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <div className="p-4 rounded-2xl bg-[#ecfdf5] border border-[#bbf7d0] text-[#166534] dark:bg-[#062d1d] dark:border-[#14532d] dark:text-[#86efac] text-sm font-semibold flex items-center gap-3">
+                        <FiCheckCircle className="w-5 h-5 shrink-0" />
                         {message}
                     </div>
                 )}
                 {error && (
-                    <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold flex items-center gap-3">
-                        <FiAlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+                    <div className="p-4 rounded-2xl bg-[#fff1f2] border border-[#fecaca] text-[#b91c1c] dark:bg-[#2a0d12] dark:border-[#7f1d1d] dark:text-[#fca5a5] text-sm font-semibold flex items-center gap-3">
+                        <FiAlertCircle className="w-5 h-5 shrink-0" />
                         {error}
                     </div>
                 )}
 
-                {/* Main Settings Form Card */}
-                <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-6">
-                    <div className="border-b border-slate-100 dark:border-slate-800/60 pb-4">
-                        <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <FiShield className="text-indigo-500" />
-                            Account Credentials & Profile Info
+                <div className="surface-card p-6 sm:p-8 space-y-6">
+                    <div className="border-b border-[var(--border)] pb-4">
+                        <h2 className="text-lg font-bold text-[var(--text)] flex items-center gap-2">
+                            <FiShield className="text-[var(--primary)]" />
+                            Account credentials & profile info
                         </h2>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                            Update your personal display name and primary contact details.
+                        <p className="text-xs text-[var(--text-muted)] mt-1">
+                            Update your display name and primary contact details.
                         </p>
                     </div>
 
                     <form onSubmit={handleSave} className="space-y-5">
-                        {/* Name Input */}
                         <div>
-                            <label htmlFor="name" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                            <label htmlFor="name" className="block text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)] mb-2">
                                 Full Display Name
                             </label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--text-muted)]">
                                     <FiUser className="w-4 h-4" />
                                 </div>
                                 <input
@@ -160,24 +154,17 @@ function Profile() {
                                     value={profile?.name || ""}
                                     onChange={handleChange}
                                     placeholder="Enter your name"
-                                    className="
-                                        w-full pl-11 pr-4 py-3 rounded-xl text-sm font-medium
-                                        bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800
-                                        text-slate-900 dark:text-white placeholder-slate-400
-                                        focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
-                                        transition-all duration-200
-                                    "
+                                    className="input-shell pl-11 pr-4 py-3 text-sm"
                                 />
                             </div>
                         </div>
 
-                        {/* Email Input */}
                         <div>
-                            <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                            <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)] mb-2">
                                 Primary Email Address
                             </label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--text-muted)]">
                                     <FiMail className="w-4 h-4" />
                                 </div>
                                 <input
@@ -187,28 +174,13 @@ function Profile() {
                                     value={profile?.email || ""}
                                     onChange={handleChange}
                                     placeholder="Enter your email address"
-                                    className="
-                                        w-full pl-11 pr-4 py-3 rounded-xl text-sm font-medium
-                                        bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800
-                                        text-slate-900 dark:text-white placeholder-slate-400
-                                        focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
-                                        transition-all duration-200
-                                    "
+                                    className="input-shell pl-11 pr-4 py-3 text-sm"
                                 />
                             </div>
                         </div>
 
-                        {/* Submit Action */}
                         <div className="pt-4 flex justify-end">
-                            <button
-                                type="submit"
-                                disabled={saving}
-                                className="
-                                    inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold text-sm text-white
-                                    bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
-                                    disabled:opacity-50 shadow-lg shadow-indigo-600/25 transition-all duration-200 cursor-pointer
-                                "
-                            >
+                            <button type="submit" disabled={saving} className="button-primary px-7 py-3.5">
                                 {saving ? (
                                     <span className="flex items-center gap-2">
                                         <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

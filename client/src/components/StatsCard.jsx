@@ -3,24 +3,24 @@ import { motion } from "framer-motion";
 function StatsCard({ title, value, icon: Icon, trend, color = "indigo", progress = 75 }) {
     const colorMap = {
         indigo: {
-            bg: "bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
-            bar: "bg-gradient-to-r from-indigo-500 to-purple-600",
-            badge: "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300",
+            bg: "bg-[var(--primary-soft)] text-[var(--primary)] border-[rgba(31,94,255,0.12)]",
+            bar: "bg-[var(--primary)]",
+            badge: "bg-[var(--primary-soft)] text-[var(--primary)]",
         },
         emerald: {
-            bg: "bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-            bar: "bg-gradient-to-r from-emerald-500 to-teal-600",
-            badge: "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300",
+            bg: "bg-[#ecfdf5] dark:bg-[#052e1d] text-[#16a34a] border-[#bbf7d0] dark:border-[#14532d]",
+            bar: "bg-[#16a34a]",
+            badge: "bg-[#ecfdf5] text-[#15803d] dark:bg-[#052e1d] dark:text-[#4ade80]",
         },
         amber: {
-            bg: "bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/20",
-            bar: "bg-gradient-to-r from-amber-500 to-orange-600",
-            badge: "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300",
+            bg: "bg-[#fff7ed] dark:bg-[#3a2208] text-[#f59e0b] border-[#fed7aa] dark:border-[#78350f]",
+            bar: "bg-[#f59e0b]",
+            badge: "bg-[#fff7ed] text-[#b45309] dark:bg-[#3a2208] dark:text-[#fbbf24]",
         },
         violet: {
-            bg: "bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 border-violet-500/20",
-            bar: "bg-gradient-to-r from-violet-500 to-fuchsia-600",
-            badge: "bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300",
+            bg: "bg-[#f5f3ff] dark:bg-[#1f163b] text-[#7c3aed] border-[#ddd6fe] dark:border-[#4c1d95]",
+            bar: "bg-[#7c3aed]",
+            badge: "bg-[#f5f3ff] text-[#6d28d9] dark:bg-[#1f163b] dark:text-[#a78bfa]",
         },
     };
 
@@ -28,44 +28,38 @@ function StatsCard({ title, value, icon: Icon, trend, color = "indigo", progress
 
     return (
         <motion.div
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            className="
-                relative overflow-hidden p-6 rounded-2xl
-                bg-white dark:bg-slate-900/90
-                border border-slate-200/80 dark:border-slate-800/80
-                shadow-sm hover:shadow-xl hover:shadow-indigo-500/5
-                transition-all duration-300 group
-            "
+            whileHover={{ y: -2 }}
+            transition={{ duration: 0.18 }}
+            className="relative overflow-hidden p-5 rounded-[18px] bg-[var(--panel)] border border-[var(--border)] shadow-sm"
         >
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between gap-3">
                 <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
                         {title}
                     </span>
-                    <h3 className="mt-2 text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                    <h3 className="mt-2 text-3xl font-extrabold tracking-tight text-[var(--text)]">
                         {value ?? 0}
                     </h3>
 
                     {trend && (
                         <div className="mt-2 flex items-center gap-1.5">
-                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${activeColor.badge}`}>
+                            <span className={`text-[10px] font-semibold px-2 py-1 rounded-full border ${activeColor.badge}`}>
                                 {trend}
                             </span>
                         </div>
                     )}
                 </div>
 
-                <div className={`p-3.5 rounded-2xl border ${activeColor.bg} group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
-                    {Icon ? <Icon className="w-6 h-6" /> : null}
+                <div className={`p-3 rounded-xl border ${activeColor.bg}`}>
+                    {Icon ? <Icon className="w-5 h-5" /> : null}
                 </div>
             </div>
 
-            {/* Progress Bar Accent */}
-            <div className="mt-5 w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+            <div className="mt-5 w-full h-2 rounded-full bg-[var(--panel-soft)] overflow-hidden border border-[var(--border)]">
                 <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
                     className={`h-full rounded-full ${activeColor.bar}`}
                 />
             </div>

@@ -53,55 +53,39 @@ function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-indigo-500 selection:text-white">
-            {/* Background Ambient Blobs */}
-            <div className="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/25 rounded-full blur-3xl pointer-events-none animate-float" />
-            <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-purple-600/25 rounded-full blur-3xl pointer-events-none animate-float" style={{ animationDelay: "2s" }} />
-
+        <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4 sm:p-6">
             <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="w-full max-w-md bg-slate-900/80 border border-slate-800/80 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 sm:p-10 relative z-10"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35 }}
+                className="w-full max-w-md surface-card p-6 sm:p-8 relative"
             >
-                {/* Header Brand */}
                 <div className="text-center">
-                    <Link to="/" className="inline-flex items-center justify-center gap-3 group">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
-                            <FiCpu className="w-7 h-7" />
+                    <Link to="/" className="inline-flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-sm">
+                            <FiCpu className="w-6 h-6" />
                         </div>
                     </Link>
 
-                    <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-white">
-                        Welcome Back
-                    </h1>
-                    <p className="mt-2 text-sm text-slate-400">
-                        Sign in to access your interview workspace
-                    </p>
+                    <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[var(--text)]">Welcome back</h1>
+                    <p className="mt-2 text-sm text-[var(--text-muted)]">Sign in to access your interview workspace</p>
                 </div>
 
-                {/* Error Banner */}
                 {error && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-6 flex items-center gap-3 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-medium"
-                    >
-                        <FiAlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
-                        <span>{error}</span>
+                    <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-6 flex items-center gap-3 p-3.5 rounded-xl border border-[#fecaca] bg-[#fff1f2] text-[#b91c1c] dark:border-[#7f1d1d] dark:bg-[#2a0d12] dark:text-[#fca5a5]">
+                        <FiAlertCircle className="w-5 h-5 shrink-0" />
+                        <span className="text-sm font-medium">{error}</span>
                     </motion.div>
                 )}
 
-                {/* Form */}
                 <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-                    {/* Email */}
                     <div>
-                        <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                        <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)] mb-2">
                             Email Address
                         </label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
-                                <FiMail className="w-5 h-5" />
+                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[var(--text-muted)]">
+                                <FiMail className="w-4 h-4" />
                             </div>
                             <input
                                 id="email"
@@ -110,24 +94,18 @@ function Login() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="name@domain.com"
                                 autoComplete="email"
-                                className="
-                                    w-full pl-11 pr-4 py-3.5 rounded-xl text-sm font-medium
-                                    bg-slate-950/60 border border-slate-800 text-white placeholder-slate-500
-                                    focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
-                                    transition-all duration-200
-                                "
+                                className="input-shell pl-10 pr-3 py-3 text-sm"
                             />
                         </div>
                     </div>
 
-                    {/* Password */}
                     <div>
-                        <label htmlFor="password" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                        <label htmlFor="password" className="block text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)] mb-2">
                             Password
                         </label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
-                                <FiLock className="w-5 h-5" />
+                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[var(--text-muted)]">
+                                <FiLock className="w-4 h-4" />
                             </div>
                             <input
                                 id="password"
@@ -136,33 +114,19 @@ function Login() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••••"
                                 autoComplete="current-password"
-                                className="
-                                    w-full pl-11 pr-11 py-3.5 rounded-xl text-sm font-medium
-                                    bg-slate-950/60 border border-slate-800 text-white placeholder-slate-500
-                                    focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
-                                    transition-all duration-200
-                                "
+                                className="input-shell pl-10 pr-10 py-3 text-sm"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300"
+                                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[var(--text-muted)]"
                             >
-                                {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                                {showPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
                             </button>
                         </div>
                     </div>
 
-                    {/* Submit Button */}
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="
-                            w-full flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-sm text-white
-                            bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-95
-                            disabled:opacity-50 shadow-lg shadow-indigo-500/25 transition-all duration-200 cursor-pointer
-                        "
-                    >
+                    <button type="submit" disabled={loading} className="button-primary w-full py-3.5">
                         {loading ? (
                             <span className="flex items-center gap-2">
                                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -177,10 +141,9 @@ function Login() {
                     </button>
                 </form>
 
-                {/* Footer Switch */}
-                <p className="mt-8 text-center text-xs font-medium text-slate-400">
-                    Don't have an account?{" "}
-                    <Link to="/register" className="font-bold text-indigo-400 hover:text-indigo-300 hover:underline">
+                <p className="mt-8 text-center text-xs text-[var(--text-muted)]">
+                    Don&apos;t have an account?{" "}
+                    <Link to="/register" className="font-bold text-[var(--primary)] hover:underline">
                         Create Account
                     </Link>
                 </p>
