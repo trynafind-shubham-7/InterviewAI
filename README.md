@@ -6,7 +6,8 @@ InterviewAI helps you prepare for interviews with personalized AI-driven practic
 
 Upload your resume, understand where you stand, practice realistic interviews, and get detailed feedback on your answers — all from one platform.
 
-<img width="1916" height="966" alt="image" src="https://github.com/user-attachments/assets/55fac268-5307-4ac8-a51a-32bb1ab08a2d" />
+<img width="1919" height="916" alt="image" src="https://github.com/user-attachments/assets/8864de73-41f8-4a54-bae1-5aae6d732350" />
+
 
 
 **[Live Demo](https://interview-ai-plum-omega.vercel.app/)** · **[GitHub](https://github.com/trynafind-shubham-7/InterviewAI)**
@@ -18,13 +19,15 @@ Upload your resume, understand where you stand, practice realistic interviews, a
 **Resume Analysis**  
 Upload a PDF resume and get an AI-generated score, strengths, missing skills, and actionable improvements.
 
-<img width="1913" height="905" alt="image" src="https://github.com/user-attachments/assets/5af32cff-fcae-457d-8d12-0504a6b287a6" />
+<img width="1919" height="905" alt="image" src="https://github.com/user-attachments/assets/523ba949-985a-400c-a2b3-785a7ee340d7" />
+
 
 
 **AI Interviews**  
 Practice interview questions through an interactive interview experience.
 
-<img width="1917" height="908" alt="image" src="https://github.com/user-attachments/assets/2a07260c-0d85-49f4-b2a0-1a7e06646803" />
+<img width="1919" height="920" alt="image" src="https://github.com/user-attachments/assets/d1021b7d-163a-4ce4-b879-5eff6fa1ab17" />
+
 
 
 **Answer Evaluation**  
