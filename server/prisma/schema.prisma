@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  resumeText String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  resumes   Resume[]
+  interviews InterviewHistory[]
+  sessions  InterviewSession[]
+}
+
+model Resume {
+  id           Int      @id @default(autoincrement())
+  originalName String
+  fileName     String
+  filePath     String
+  fileSize     Int
+  uploadedAt   DateTime @default(now())
+  isActive     Boolean  @default(true)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  analysis ResumeAnalysis?
+  sessions InterviewSession[]
+}
+
+model ResumeAnalysis {
+  id      Int    @id @default(autoincrement())
+  score   Int
+  summary String
+
+  strengths     Json
+  missingSkills Json
+  improvements  Json
+
+  createdAt DateTime @default(now())
+
+  resumeId Int    @unique
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+}
+
+model InterviewHistory {
+  id Int @id @default(autoincrement())
+
+  question   String
+  answer     String
+  score      Int
+  feedback   String
+  createdAt  DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model InterviewSession {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  resumeId Int?
+  resume   Resume? @relation(fields: [resumeId], references: [id], onDelete: SetNull)
+
+  questions Json
+  answers   Json
+  evaluations Json
+  report    Json
+
+  overallScore Float @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
